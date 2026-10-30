@@ -512,13 +512,13 @@
                     </div>
                     <div class="space-y-2">
                         <div>
-                            <label class="block text-[11px] font-semibold text-slate-400 mb-0.5">予定</label>
+                            <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">予定</label>
                             <textarea rows="1" class="schedule-textarea w-full px-3 py-1.5 rounded-lg text-slate-800 border text-xs sm:text-sm transition-all"
                                       placeholder="予定内容、時間、場所などを入力"
                                       oninput="autoResize(this); onScheduleInput('${dateStr}', 'col1', this.value);">${escapeHTML(scheduleObj.col1)}</textarea>
                         </div>
                         <div>
-                            <label class="block text-[11px] font-semibold text-slate-400 mb-0.5">その他・備考</label>
+                            <label class="block text-[11px] font-semibold text-slate-500 mb-0.5">その他・備考</label>
                             <textarea rows="1" class="schedule-textarea w-full px-3 py-1.5 rounded-lg text-slate-800 border text-xs sm:text-sm transition-all"
                                       placeholder="備考、他団体の予定などを入力"
                                       oninput="autoResize(this); onScheduleInput('${dateStr}', 'col2', this.value);">${escapeHTML(scheduleObj.col2)}</textarea>
@@ -526,23 +526,22 @@
                     </div>
                 `;
             } else {
-                const hasCol1 = scheduleObj.col1 && scheduleObj.col1.trim() !== "";
-                const hasCol2 = scheduleObj.col2 && scheduleObj.col2.trim() !== "";
-
                 card.innerHTML = `
-                    <div class="flex items-center gap-2 mb-1.5">
+                    <div class="flex items-center gap-2 mb-2">
                         <span class="inline-block w-6 h-6 leading-6 text-center text-xs font-bold rounded-md ${dayColorClass}">${dayOfWeek}</span>
                         <span class="font-bold text-sm ${dateColorClass}">${currentMonth + 1}月${day}日</span>
                         ${holidayName ? `<span class="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-md leading-none border border-rose-200/60">${escapeHTML(holidayName)}</span>` : ''}
                     </div>
-                    ${(hasCol1 || hasCol2) ? `
-                        <div class="pl-8 space-y-1 text-xs sm:text-sm">
-                            ${hasCol1 ? `<div class="leading-relaxed text-slate-800 whitespace-pre-wrap break-all">${linkifyAndEscape(scheduleObj.col1)}</div>` : ''}
-                            ${hasCol2 ? `<div class="leading-relaxed text-slate-500 whitespace-pre-wrap break-all text-[11px] sm:text-xs pt-0.5">${linkifyAndEscape(scheduleObj.col2)}</div>` : ''}
+                    <div class="pl-8 space-y-2 text-xs sm:text-sm">
+                        <div>
+                            <div class="text-[11px] font-semibold text-slate-400 mb-0.5">予定</div>
+                            <div class="leading-relaxed text-slate-800 whitespace-pre-wrap break-all">${linkifyAndEscape(scheduleObj.col1)}</div>
                         </div>
-                    ` : `
-                        <div class="pl-8 text-xs text-slate-300 italic">予定なし</div>
-                    `}
+                        <div>
+                            <div class="text-[11px] font-semibold text-slate-400 mb-0.5">その他・備考</div>
+                            <div class="leading-relaxed text-slate-800 whitespace-pre-wrap break-all">${linkifyAndEscape(scheduleObj.col2)}</div>
+                        </div>
+                    </div>
                 `;
             }
             mobileList.appendChild(card);
