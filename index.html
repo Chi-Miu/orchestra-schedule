@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- サーチエンジンの検索に反映させないための設定 -->
+    <meta name="robots" content="noindex, nofollow">
     <title>湯沢市民管弦楽団 アンサンブル・リベラ 予定表</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -236,7 +238,7 @@
     // ----------------------------------------------------
     // ★ パスワードのハッシュ化・認証設定
     // ----------------------------------------------------
-    const ADMIN_PASSWORD_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
+  const ADMIN_PASSWORD_HASH = "a74f49e16fad3f4383ea5fc76ea7c8123550b6fc7a41d12e5a5f2579addca549";
 
     async function hashPassword(str) {
         const encoder = new TextEncoder();
