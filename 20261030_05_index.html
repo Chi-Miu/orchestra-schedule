@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>湯沢市民管弦楽団 アンサンブル・リベラ 予定表</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        body.viewer-mode .admin-only {
+            display: none !important;
+        }
+
+        textarea.schedule-textarea {
+            resize: none;
+            overflow: hidden;
+            min-height: 38px;
+            line-height: 1.5;
+        }
+
+        body.admin-mode .schedule-textarea {
+            border-color: #e2e8f0;
+            background-color: #ffffff;
+        }
+
+        body.admin-mode .schedule-textarea:hover {
+            border-color: #cbd5e1;
+        }
+
+        body.admin-mode .schedule-textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body id="appBody" class="viewer-mode min-h-screen pb-12">
+
+<div class="max-w-5xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+    
+    <!-- ヘッダーエリア -->
+    <header class="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-indigo-200">
+                <i class="fa-regular fa-calendar-check"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-slate-800 tracking-tight">湯沢市民管弦楽団 アンサンブル・リベラ 予定表</h1>
+                <p class="text-xs text-slate-500">クラウド同期対応：メンバー全員で最新の予定を共有</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <span id="adminBadge" class="hidden bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-xs font-semibold items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                管理者モード中
+            </span>
+            <button id="authBtn" onclick="openLoginModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium text-sm rounded-xl shadow-sm transition-all duration-200 flex items-center gap-2">
+                <i class="fa-solid fa-lock text-xs"></i>
+                <span id="authBtnText">管理者ログイン</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 月移動＆ツールバー -->
+    <div class="bg-white rounded-2xl p-4 mb-6 shadow-sm border border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center justify-between w-full md:w-auto gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200/60">
+            <button onclick="changeMonth(-1)" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 font-medium text-sm rounded-lg shadow-sm border border-slate-200 transition-all">
+                <i class="fa-solid fa-chevron-left text-xs sm:mr-1"></i> <span class="hidden sm:inline">前月</span>
+            </button>
+            <div id="monthTitle" class="text-base sm:text-lg font-bold text-slate-800 px-4 min-w-[140px] text-center">
+                2026年 10月
+            </div>
+            <button onclick="changeMonth(1)" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 font-medium text-sm rounded-lg shadow-sm border border-slate-200 transition-all">
+                <span class="hidden sm:inline">次月</span> <i class="fa-solid fa-chevron-right text-xs sm:ml-1"></i>
+            </button>
+            <button onclick="goToCurrentMonth()" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium text-xs sm:text-sm rounded-lg transition-all ml-1 border border-indigo-100">
+                今月
+            </button>
+        </div>
+
+        <div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
+            <button onclick="openExportModal()" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-file-csv text-emerald-600 text-sm"></i>
+                CSV出力
+            </button>
+            <label class="admin-only cursor-pointer px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-file-import text-indigo-600 text-sm"></i>
+                CSV取込
+                <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="importCSV(event)">
+            </label>
+        </div>
+    </div>
+
+    <!-- カレンダーテーブルコンテナ -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+        <div class="p-3 bg-slate-50 border-b border-slate-200 text-xs text-slate-500 flex justify-between items-center px-4">
+            <span><i class="fa-solid fa-circle-info text-indigo-500 mr-1"></i> URL（http://...）やテキストリンク <code>[表示名](URL)</code> に自動対応します</span>
+            <span id="holidayNotice" class="hidden sm:inline-block text-slate-400">日本の祝日に自動対応</span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[640px]">
+                <thead>
+                    <tr class="bg-slate-100/70 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        <th class="py-3 px-4 w-28 sm:w-36 align-middle">日付</th>
+                        <th class="py-3 px-2 w-14 text-center align-middle">曜日</th>
+                        <th class="py-3 px-4 w-1/2 align-middle">予定</th>
+                        <th class="py-3 px-4 w-1/2 align-middle">その他・備考</th>
+                        <th class="admin-only py-3 px-3 w-14 text-center align-middle">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="calendarTableBody" class="divide-y divide-slate-100 text-sm">
+                    <!-- Dynamic Rendering via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 管理者ログインモーダル -->
+<div id="loginModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-100 transform scale-95 transition-transform duration-200 mx-4">
+        <form onsubmit="submitLogin(); return false;">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-800">管理者権限の認証</h3>
+                <button type="button" onclick="closeLoginModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-500 mb-4">スケジュールの追加・編集・削除を行うにはパスワードが必要です。</p>
+            <div class="mb-5">
+                <label class="block text-xs font-semibold text-slate-600 mb-1">パスワード</label>
+                <input type="password" id="passwordInput" placeholder="パスワードを入力" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm">
+                <p id="loginError" class="text-xs text-rose-500 mt-1.5 hidden font-medium"></p>
+            </div>
+            <div class="flex gap-2">
+                <button type="button" onclick="closeLoginModal()" class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-xl transition-all">キャンセル</button>
+                <button type="submit" class="w-1/2 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl shadow-sm transition-all">認証する</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- CSV出力期間選択モーダル -->
+<div id="exportModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 transform scale-95 transition-transform duration-200 mx-4">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-slate-800">CSV出力 期間設定</h3>
+            <button type="button" onclick="closeExportModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">出力する期間を指定してください。（予定が入力されている行のみ出力されます）</p>
+        
+        <div class="space-y-4 mb-6">
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">開始日</label>
+                <input type="date" id="exportStartDate" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm bg-slate-50">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">終了日</label>
+                <input type="date" id="exportEndDate" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm bg-slate-50">
+            </div>
+        </div>
+
+        <div class="flex gap-2">
+            <button type="button" onclick="closeExportModal()" class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-xl transition-all">キャンセル</button>
+            <button type="button" onclick="executeExportCSV()" class="w-1/2 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-file-csv"></i> 出力する
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div id="toastContent" class="bg-slate-800 text-white text-xs font-medium px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 border border-slate-700">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastMessage">メッセージ</span>
+    </div>
+</div>
+
+<!-- Firebase SDK (Modular v10) -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // ----------------------------------------------------
+    // ★ Firebase設定情報
+    // ----------------------------------------------------
+    const firebaseConfig = {
+      apiKey: "AIzaSyDt-W3WIOO27ZkUrrzhOc1JGvGzjIu50Ww",
+      authDomain: "test-9179e.firebaseapp.com",
+      projectId: "test-9179e",
+      storageBucket: "test-9179e.firebasestorage.app",
+      messagingSenderId: "230763039027",
+      appId: "1:230763039027:web:f2fa3e6a462d7b11ca1646",
+      measurementId: "G-2PV0N497K0"
+    };
+
+    // Firebase初期化
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ----------------------------------------------------
+    // ★ パスワードのハッシュ化・認証設定
+    // ----------------------------------------------------
+    const ADMIN_PASSWORD_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
+
+    async function hashPassword(str) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    let isAdmin = false;
+    let currentDate = new Date();
+    let currentYear = currentDate.getFullYear();
+    let currentMonth = currentDate.getMonth(); 
+
+    let monthlySchedules = {}; // メモリ上の月別キャッシュ
+
+    // テキストエリア自動伸縮
+    window.autoResize = function(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    };
+
+    // 日本の祝日判定
+    function getJapaneseHolidays(year) {
+        const holidays = {};
+        const addHoliday = (m, d, name) => {
+            holidays[`${year}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`] = name;
+        };
+        addHoliday(1, 1, "元日");
+        addHoliday(2, 11, "建国記念の日");
+        addHoliday(2, 23, "天皇誕生日");
+        addHoliday(4, 29, "昭和の日");
+        addHoliday(5, 3, "憲法記念日");
+        addHoliday(5, 4, "みどりの日");
+        addHoliday(5, 5, "こどもの日");
+        addHoliday(8, 11, "山の日");
+        addHoliday(11, 3, "文化の日");
+        addHoliday(11, 23, "勤労感謝の日");
+
+        const getHappyMonday = (month, nth) => {
+            let count = 0;
+            for (let d = 1; d <= 31; d++) {
+                const date = new Date(year, month - 1, d);
+                if (date.getMonth() !== month - 1) break;
+                if (date.getDay() === 1) { count++; if (count === nth) return d; }
+            }
+            return 1;
+        };
+        addHoliday(1, getHappyMonday(1, 2), "成人の日");
+        addHoliday(7, getHappyMonday(7, 3), "海の日");
+        addHoliday(9, getHappyMonday(9, 3), "敬老の日");
+        addHoliday(10, getHappyMonday(10, 2), "スポーツの日");
+
+        const shunbun = Math.floor(20.8431 + 0.242194 * (year - 1980) - Math.floor((year - 1980) / 4));
+        const shubun = Math.floor(23.2488 + 0.242194 * (year - 1980) - Math.floor((year - 1980) / 4));
+        addHoliday(3, shunbun, "春分の日");
+        addHoliday(9, shubun, "秋分の日");
+        return holidays;
+    }
+
+    // --- Firebaseからデータを取得する関数 ---
+    async function fetchSchedulesFromCloud() {
+        monthlySchedules = {};
+        try {
+            const querySnapshot = await getDocs(collection(db, "schedules"));
+            querySnapshot.forEach((docSnap) => {
+                const dateStr = docSnap.id; 
+                const data = docSnap.data();
+                monthlySchedules[dateStr] = {
+                    col1: data.col1 || '',
+                    col2: data.col2 || ''
+                };
+            });
+        } catch (e) {
+            console.error("データ取得エラー: ", e);
+            showToast("データの取得に失敗しました", "info");
+        }
+        renderCalendar();
+    }
+
+    // --- Firebaseへデータを保存/削除する関数 ---
+    async function updateScheduleInCloud(dateStr, col1, col2) {
+        if (!isAdmin) return;
+        const docRef = doc(db, "schedules", dateStr);
+        
+        try {
+            if (!col1.trim() && !col2.trim()) {
+                await deleteDoc(docRef);
+                delete monthlySchedules[dateStr];
+            } else {
+                await setDoc(docRef, { col1, col2 });
+                monthlySchedules[dateStr] = { col1, col2 };
+            }
+        } catch (e) {
+            console.error("保存エラー: ", e);
+            showToast("保存に失敗しました", "info");
+        }
+    }
+
+    // 認証・モーダル関連
+    window.openLoginModal = function() {
+        if (isAdmin) {
+            isAdmin = false;
+            updateAuthUI();
+            showToast("閲覧専用モードに戻りました", "info");
+        } else {
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('loginError').classList.add('hidden');
+            const modal = document.getElementById('loginModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('div').classList.remove('scale-95'); }, 10);
+            setTimeout(() => document.getElementById('passwordInput').focus(), 100);
+        }
+    };
+
+    window.closeLoginModal = function() {
+        const modal = document.getElementById('loginModal');
+        modal.classList.add('opacity-0');
+        modal.querySelector('div').classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+    };
+
+    window.submitLogin = async function() {
+        const input = document.getElementById('passwordInput').value;
+        const errElem = document.getElementById('loginError');
+        
+        const inputHash = await hashPassword(input);
+
+        if (inputHash === ADMIN_PASSWORD_HASH) {
+            isAdmin = true;
+            closeLoginModal();
+            updateAuthUI();
+            showToast("管理者としてログインしました", "success");
+        } else {
+            errElem.textContent = "パスワードが正しくありません。";
+            errElem.classList.remove('hidden');
+        }
+    };
+
+    function updateAuthUI() {
+        const body = document.getElementById('appBody');
+        const badge = document.getElementById('adminBadge');
+        const authBtnText = document.getElementById('authBtnText');
+        const authBtn = document.getElementById('authBtn');
+
+        if (isAdmin) {
+            body.classList.remove('viewer-mode');
+            body.classList.add('admin-mode');
+            badge.classList.remove('hidden'); badge.classList.add('flex');
+            authBtnText.textContent = 'ログアウト';
+            authBtn.className = "px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white font-medium text-sm rounded-xl shadow-sm transition-all flex items-center gap-2";
+        } else {
+            body.classList.remove('admin-mode');
+            body.classList.add('viewer-mode');
+            badge.classList.add('hidden'); badge.classList.remove('flex');
+            authBtnText.textContent = '管理者ログイン';
+            authBtn.className = "px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl shadow-sm transition-all flex items-center gap-2";
+        }
+        renderCalendar();
+    }
+
+    // リンク＆エスケープ処理
+    function escapeHTML(str) {
+        return (str || '').replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+    }
+
+    function linkifyAndEscape(text) {
+        if (!text) return '';
+        let escaped = escapeHTML(text);
+        const markdownLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s<)]+)\)/g;
+        escaped = escaped.replace(markdownLinkRegex, (m, label, url) => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-800 font-medium underline underline-offset-2 break-all inline-flex items-center gap-1">${label}<i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>`);
+        const urlRegex = /(?<!href="|">)(https?:\/\/[^\s<]+)/g;
+        return escaped.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:text-indigo-800 font-medium underline underline-offset-2 break-all inline-flex items-center gap-1">${url}<i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></a>`);
+    }
+
+    // カレンダー描画
+    function renderCalendar() {
+        document.getElementById('monthTitle').textContent = `${currentYear}年 ${currentMonth + 1}月`;
+        const tbody = document.getElementById('calendarTableBody');
+        tbody.innerHTML = '';
+
+        const holidays = getJapaneseHolidays(currentYear);
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const todayStr = getFormattedDate(new Date());
+        const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateObj = new Date(currentYear, currentMonth, day);
+            const dateStr = getFormattedDate(dateObj);
+            const dayOfWeekIndex = dateObj.getDay();
+            const dayOfWeek = weekdays[dayOfWeekIndex];
+            const holidayName = holidays[dateStr];
+
+            const tr = document.createElement('tr');
+            tr.className = "transition-colors hover:bg-slate-50/80";
+            if (dateStr === todayStr) tr.classList.add('bg-indigo-50/40');
+
+            let dateColorClass = "text-slate-800";
+            let dayColorClass = "text-slate-500 bg-slate-100";
+            if (dayOfWeekIndex === 0 || holidayName) {
+                dateColorClass = "text-rose-600 font-bold";
+                dayColorClass = "text-rose-600 bg-rose-50 border border-rose-100";
+            } else if (dayOfWeekIndex === 6) {
+                dateColorClass = "text-blue-600 font-bold";
+                dayColorClass = "text-blue-600 bg-blue-50 border border-blue-100";
+            }
+
+            const scheduleObj = monthlySchedules[dateStr] || { col1: '', col2: '' };
+
+            if (isAdmin) {
+                tr.innerHTML = `
+                    <td class="py-2.5 px-4 font-semibold whitespace-nowrap ${dateColorClass} align-top pt-3">
+                        <div class="flex items-center gap-2">
+                            <span>${currentMonth + 1}月${day}日</span>
+                            ${holidayName ? `<span class="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-md leading-none border border-rose-200/60">${escapeHTML(holidayName)}</span>` : ''}
+                        </div>
+                    </td>
+                    <td class="py-2.5 px-2 text-center whitespace-nowrap align-top pt-3">
+                        <span class="inline-block w-7 h-7 leading-7 text-xs font-bold rounded-lg ${dayColorClass}">${dayOfWeek}</span>
+                    </td>
+                    <td class="py-1.5 px-2 align-top">
+                        <textarea rows="1" class="schedule-textarea w-full px-3 py-1.5 rounded-lg text-slate-800 border transition-all"
+                                  placeholder="予定内容、時間、場所などを入力"
+                                  oninput="autoResize(this); onScheduleInput('${dateStr}', 'col1', this.value);">${escapeHTML(scheduleObj.col1)}</textarea>
+                    </td>
+                    <td class="py-1.5 px-2 align-top">
+                        <textarea rows="1" class="schedule-textarea w-full px-3 py-1.5 rounded-lg text-slate-800 border transition-all"
+                                  placeholder="備考、他団体の予定などを入力"
+                                  oninput="autoResize(this); onScheduleInput('${dateStr}', 'col2', this.value);">${escapeHTML(scheduleObj.col2)}</textarea>
+                    </td>
+                    <td class="admin-only py-1.5 px-2 text-center whitespace-nowrap align-top pt-3">
+                        <button onclick="clearSchedule('${dateStr}')" title="クリア" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all">
+                            <i class="fa-regular fa-trash-can text-sm"></i>
+                        </button>
+                    </td>
+                `;
+            } else {
+                tr.innerHTML = `
+                    <td class="py-2.5 px-4 font-semibold whitespace-nowrap ${dateColorClass} align-top pt-3">
+                        <div class="flex items-center gap-2">
+                            <span>${currentMonth + 1}月${day}日</span>
+                            ${holidayName ? `<span class="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-md leading-none border border-rose-200/60">${escapeHTML(holidayName)}</span>` : ''}
+                        </div>
+                    </td>
+                    <td class="py-2.5 px-2 text-center whitespace-nowrap align-top pt-3">
+                        <span class="inline-block w-7 h-7 leading-7 text-xs font-bold rounded-lg ${dayColorClass}">${dayOfWeek}</span>
+                    </td>
+                    <td class="py-2.5 px-3 align-top leading-relaxed text-slate-800 whitespace-pre-wrap break-all">${linkifyAndEscape(scheduleObj.col1)}</td>
+                    <td class="py-2.5 px-3 align-top leading-relaxed text-slate-800 whitespace-pre-wrap break-all">${linkifyAndEscape(scheduleObj.col2)}</td>
+                `;
+            }
+            tbody.appendChild(tr);
+        }
+        if (isAdmin) {
+            document.querySelectorAll('textarea.schedule-textarea').forEach(ta => autoResize(ta));
+        }
+    }
+
+    window.onScheduleInput = function(dateStr, colKey, value) {
+        if (!isAdmin) return;
+        if (!monthlySchedules[dateStr]) monthlySchedules[dateStr] = { col1: '', col2: '' };
+        monthlySchedules[dateStr][colKey] = value;
+        updateScheduleInCloud(dateStr, monthlySchedules[dateStr].col1, monthlySchedules[dateStr].col2);
+    };
+
+    window.clearSchedule = function(dateStr) {
+        if (!isAdmin) return;
+        if (monthlySchedules[dateStr]) {
+            updateScheduleInCloud(dateStr, '', '');
+            renderCalendar();
+            showToast("予定をクリアしました", "info");
+        }
+    };
+
+    window.changeMonth = function(direction) {
+        currentMonth += direction;
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+        renderCalendar();
+    };
+
+    window.goToCurrentMonth = function() {
+        const now = new Date();
+        currentYear = now.getFullYear();
+        currentMonth = now.getMonth();
+        renderCalendar();
+    };
+
+    function getFormattedDate(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    // ----------------------------------------------------
+    // ★ CSV出力期間選択・実行機能
+    // ----------------------------------------------------
+    window.openExportModal = function() {
+        const todayStr = getFormattedDate(new Date());
+        let maxDateStr = todayStr;
+
+        // メモリ上のスケジュールから最も未来の日付を探す
+        const dateKeys = Object.keys(monthlySchedules).sort();
+        for (const dStr of dateKeys) {
+            const item = monthlySchedules[dStr];
+            if ((item.col1 && item.col1.trim() !== "") || (item.col2 && item.col2.trim() !== "")) {
+                if (dStr > maxDateStr) {
+                    maxDateStr = dStr;
+                }
+            }
+        }
+
+        // デフォルトとして「本日〜入力されている未来の日付の最大値」を設定
+        document.getElementById('exportStartDate').value = todayStr;
+        document.getElementById('exportEndDate').value = maxDateStr > todayStr ? maxDateStr : todayStr;
+
+        const modal = document.getElementById('exportModal');
+        modal.classList.remove('hidden');
+        setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('div').classList.remove('scale-95'); }, 10);
+    };
+
+    window.closeExportModal = function() {
+        const modal = document.getElementById('exportModal');
+        modal.classList.add('opacity-0');
+        modal.querySelector('div').classList.add('scale-95');
+        setTimeout(() => modal.classList.add('hidden'), 200);
+    };
+
+    window.executeExportCSV = function() {
+        const startDate = document.getElementById('exportStartDate').value;
+        const endDate = document.getElementById('exportEndDate').value;
+
+        if (!startDate || !endDate) {
+            showToast("開始日と終了日を指定してください", "info");
+            return;
+        }
+
+        if (startDate > endDate) {
+            showToast("開始日は終了日より前の日付を指定してください", "info");
+            return;
+        }
+
+        const holidays = getJapaneseHolidays(currentYear);
+        const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        let csvContent = "\uFEFF" + "日付,曜日,祝日,時間・練習内容,会場・備考\n";
+        let exportCount = 0;
+
+        // 登録されている全日程キーをソートして順次チェック
+        const sortedDates = Object.keys(monthlySchedules).sort();
+
+        for (const dateStr of sortedDates) {
+            // 選択された期間内かチェック
+            if (dateStr >= startDate && dateStr <= endDate) {
+                const item = monthlySchedules[dateStr];
+                // 予定が入力されている行のみ対象
+                if ((item.col1 && item.col1.trim() !== "") || (item.col2 && item.col2.trim() !== "")) {
+                    const dateObj = new Date(dateStr + "T00:00:00");
+                    const dayOfWeek = weekdays[dateObj.getDay()];
+                    const holidayName = holidays[dateStr] || "";
+
+                    csvContent += `${dateStr},${dayOfWeek},${holidayName},"${(item.col1 || "").replace(/"/g, '""')}","${(item.col2 || "").replace(/"/g, '""')}"\n`;
+                    exportCount++;
+                }
+            }
+        }
+
+        closeExportModal();
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `schedule_${startDate}_to_${endDate}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        showToast(`期間内の予定 ${exportCount} 件をCSV出力しました`, "success");
+    };
+
+    // ----------------------------------------------------
+    // ★ CSVインポート機能（スラッシュ区切り対応版）
+    // ----------------------------------------------------
+    window.importCSV = function(event) {
+        if (!isAdmin) {
+            showToast("管理者ログインが必要です", "info");
+            return;
+        }
+
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const text = e.target.result;
+            const lines = text.split(/\r\n|\n/);
+            let importedCount = 0;
+
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                const row = parseCSVLine(line);
+                if (row.length >= 5) {
+                    let dateStr = row[0].trim(); // 例: "2026/11/1" や "2026-11-01"
+
+                    if (dateStr.includes('/')) {
+                        const parts = dateStr.split('/');
+                        if (parts.length === 3) {
+                            const y = parts[0];
+                            const m = parts[1].padStart(2, '0');
+                            const d = parts[2].padStart(2, '0');
+                            dateStr = `${y}-${m}-${d}`;
+                        }
+                    }
+
+                    const col1 = row[3] || '';     // 予定
+                    const col2 = row[4] || '';     // その他・備考
+
+                    if (dateStr && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+                        await updateScheduleInCloud(dateStr, col1, col2);
+                        importedCount++;
+                    }
+                }
+            }
+
+            event.target.value = '';
+            renderCalendar();
+            showToast(`${importedCount}件のスケジュールを取り込みました`, "success");
+        };
+        reader.readAsText(file);
+    };
+
+    // ダブルクォーテーションを考慮した簡易CSV行パーサー
+    function parseCSVLine(text) {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            if (char === '"') {
+                if (inQuotes && text[i + 1] === '"') {
+                    current += '"';
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === ',' && !inQuotes) {
+                result.push(current);
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        result.push(current);
+        return result;
+    }
+
+    function showToast(message, type = "success") {
+        const toast = document.getElementById('toast');
+        const msgElem = document.getElementById('toastMessage');
+        const iconElem = document.getElementById('toastIcon');
+        msgElem.textContent = message;
+        iconElem.className = type === "success" ? "fa-solid fa-circle-check text-emerald-400" : "fa-solid fa-circle-info text-indigo-400";
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+    }
+
+    // 初期化実行：クラウドからデータを取得してカレンダーを描画
+    fetchSchedulesFromCloud();
+</script>
+
+</body>
+</html>
