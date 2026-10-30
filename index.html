@@ -61,26 +61,26 @@
 </head>
 <body id="appBody" class="viewer-mode min-h-screen pb-12">
 
-<div class="max-w-5xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+<div class="max-w-5xl mx-auto px-3 py-4 sm:px-6 lg:px-8">
     
     <!-- ヘッダーエリア -->
-    <header class="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <header class="bg-white rounded-2xl p-4 sm:p-5 mb-4 sm:mb-6 shadow-sm border border-slate-200/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-indigo-200">
+            <div class="w-10 h-10 shrink-0 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-indigo-200">
                 <i class="fa-regular fa-calendar-check"></i>
             </div>
             <div>
-                <h1 class="text-xl font-bold text-slate-800 tracking-tight">湯沢市民管弦楽団 アンサンブル・リベラ 予定表</h1>
-                <p class="text-xs text-slate-500">クラウド同期対応：メンバー全員で最新の予定を共有</p>
+                <h1 class="text-lg sm:text-xl font-bold text-slate-800 tracking-tight leading-snug">湯沢市民管弦楽団 アンサンブル・リベラ 予定表</h1>
+                <p class="text-xs text-slate-500 mt-0.5">クラウド同期対応：メンバー全員で最新の予定を共有</p>
             </div>
         </div>
 
-        <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-            <span id="adminBadge" class="hidden bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-xs font-semibold items-center gap-1.5">
+        <div class="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-0 pt-3 sm:pt-0 border-slate-100">
+            <span id="adminBadge" class="hidden bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full text-xs font-semibold items-center gap-1.5 shrink-0">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 管理者モード中
             </span>
-            <button id="authBtn" onclick="openLoginModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium text-sm rounded-xl shadow-sm transition-all duration-200 flex items-center gap-2">
+            <button id="authBtn" onclick="openLoginModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium text-xs sm:text-sm rounded-xl shadow-sm transition-all duration-200 flex items-center gap-1.5 ml-auto sm:ml-0 shrink-0">
                 <i class="fa-solid fa-lock text-xs"></i>
                 <span id="authBtnText">管理者ログイン</span>
             </button>
@@ -88,28 +88,28 @@
     </header>
 
     <!-- 月移動＆ツールバー -->
-    <div class="bg-white rounded-2xl p-4 mb-6 shadow-sm border border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div class="flex items-center justify-between w-full md:w-auto gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200/60">
-            <button onclick="changeMonth(-1)" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 font-medium text-sm rounded-lg shadow-sm border border-slate-200 transition-all">
+    <div class="bg-white rounded-2xl p-3 sm:p-4 mb-4 sm:mb-6 shadow-sm border border-slate-200/80 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4">
+        <div class="flex items-center justify-between w-full md:w-auto gap-1.5 sm:gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200/60">
+            <button onclick="changeMonth(-1)" class="px-2.5 sm:px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 font-medium text-xs sm:text-sm rounded-lg shadow-sm border border-slate-200 transition-all shrink-0">
                 <i class="fa-solid fa-chevron-left text-xs sm:mr-1"></i> <span class="hidden sm:inline">前月</span>
             </button>
-            <div id="monthTitle" class="text-base sm:text-lg font-bold text-slate-800 px-4 min-w-[140px] text-center">
+            <div id="monthTitle" class="text-base sm:text-lg font-bold text-slate-800 px-2 sm:px-4 flex-1 sm:min-w-[140px] text-center">
                 2026年 10月
             </div>
-            <button onclick="changeMonth(1)" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 font-medium text-sm rounded-lg shadow-sm border border-slate-200 transition-all">
+            <button onclick="changeMonth(1)" class="px-2.5 sm:px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 font-medium text-xs sm:text-sm rounded-lg shadow-sm border border-slate-200 transition-all shrink-0">
                 <span class="hidden sm:inline">次月</span> <i class="fa-solid fa-chevron-right text-xs sm:ml-1"></i>
             </button>
-            <button onclick="goToCurrentMonth()" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium text-xs sm:text-sm rounded-lg transition-all ml-1 border border-indigo-100">
+            <button onclick="goToCurrentMonth()" class="px-2.5 sm:px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium text-xs sm:text-sm rounded-lg transition-all ml-1 border border-indigo-100 shrink-0">
                 今月
             </button>
         </div>
 
-        <div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
-            <button onclick="openExportModal()" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+        <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+            <button onclick="openExportModal()" class="flex-1 md:flex-initial justify-center px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-1.5">
                 <i class="fa-solid fa-file-csv text-emerald-600 text-sm"></i>
                 CSV出力
             </button>
-            <label class="admin-only cursor-pointer px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+            <label class="admin-only flex-1 md:flex-initial justify-center cursor-pointer px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-1.5">
                 <i class="fa-solid fa-file-import text-indigo-600 text-sm"></i>
                 CSV取込
                 <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="importCSV(event)">
@@ -117,18 +117,19 @@
         </div>
     </div>
 
-    <!-- カレンダーテーブルコンテナ -->
+    <!-- カレンダーコンテナ -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
         <div class="p-3 bg-slate-50 border-b border-slate-200 text-xs text-slate-500 flex justify-between items-center px-4">
             <span><i class="fa-solid fa-circle-info text-indigo-500 mr-1"></i> URL（http://...）やテキストリンク <code>[表示名](URL)</code> に自動対応します</span>
             <span id="holidayNotice" class="hidden sm:inline-block text-slate-400">日本の祝日に自動対応</span>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse min-w-[640px]">
+        <!-- PC / タブレット用（テーブル表示） -->
+        <div class="hidden sm:block overflow-x-auto">
+            <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-100/70 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                        <th class="py-3 px-4 w-28 sm:w-36 align-middle">日付</th>
+                        <th class="py-3 px-4 w-36 align-middle">日付</th>
                         <th class="py-3 px-2 w-14 text-center align-middle">曜日</th>
                         <th class="py-3 px-4 w-1/2 align-middle">予定</th>
                         <th class="py-3 px-4 w-1/2 align-middle">その他・備考</th>
@@ -140,12 +141,17 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- スマホ用（リスト・カード表示） -->
+        <div id="calendarMobileList" class="sm:hidden divide-y divide-slate-100">
+            <!-- Dynamic Rendering via JS -->
+        </div>
     </div>
 </div>
 
 <!-- 管理者ログインモーダル -->
-<div id="loginModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-100 transform scale-95 transition-transform duration-200 mx-4">
+<div id="loginModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200 p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-100 transform scale-95 transition-transform duration-200">
         <form onsubmit="submitLogin(); return false;">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold text-slate-800">管理者権限の認証</h3>
@@ -168,8 +174,8 @@
 </div>
 
 <!-- CSV出力期間選択モーダル -->
-<div id="exportModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 transform scale-95 transition-transform duration-200 mx-4">
+<div id="exportModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200 p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 transform scale-95 transition-transform duration-200">
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-bold text-slate-800">CSV出力 期間設定</h3>
             <button type="button" onclick="closeExportModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1">
@@ -381,13 +387,13 @@
             body.classList.add('admin-mode');
             badge.classList.remove('hidden'); badge.classList.add('flex');
             authBtnText.textContent = 'ログアウト';
-            authBtn.className = "px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white font-medium text-sm rounded-xl shadow-sm transition-all flex items-center gap-2";
+            authBtn.className = "px-3.5 py-2 bg-slate-700 hover:bg-slate-800 text-white font-medium text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-1.5 ml-auto sm:ml-0 shrink-0";
         } else {
             body.classList.remove('admin-mode');
             body.classList.add('viewer-mode');
             badge.classList.add('hidden'); badge.classList.remove('flex');
             authBtnText.textContent = '管理者ログイン';
-            authBtn.className = "px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-xl shadow-sm transition-all flex items-center gap-2";
+            authBtn.className = "px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs sm:text-sm rounded-xl shadow-sm transition-all flex items-center gap-1.5 ml-auto sm:ml-0 shrink-0";
         }
         renderCalendar();
     }
@@ -410,7 +416,9 @@
     function renderCalendar() {
         document.getElementById('monthTitle').textContent = `${currentYear}年 ${currentMonth + 1}月`;
         const tbody = document.getElementById('calendarTableBody');
+        const mobileList = document.getElementById('calendarMobileList');
         tbody.innerHTML = '';
+        mobileList.innerHTML = '';
 
         const holidays = getJapaneseHolidays(currentYear);
         const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -424,10 +432,6 @@
             const dayOfWeek = weekdays[dayOfWeekIndex];
             const holidayName = holidays[dateStr];
 
-            const tr = document.createElement('tr');
-            tr.className = "transition-colors hover:bg-slate-50/80";
-            if (dateStr === todayStr) tr.classList.add('bg-indigo-50/40');
-
             let dateColorClass = "text-slate-800";
             let dayColorClass = "text-slate-500 bg-slate-100";
             if (dayOfWeekIndex === 0 || holidayName) {
@@ -439,6 +443,12 @@
             }
 
             const scheduleObj = monthlySchedules[dateStr] || { col1: '', col2: '' };
+            const isToday = dateStr === todayStr;
+
+            // --- 1. PC/タブレット用テーブル行 ---
+            const tr = document.createElement('tr');
+            tr.className = "transition-colors hover:bg-slate-50/80";
+            if (isToday) tr.classList.add('bg-indigo-50/40');
 
             if (isAdmin) {
                 tr.innerHTML = `
@@ -483,7 +493,61 @@
                 `;
             }
             tbody.appendChild(tr);
+
+            // --- 2. スマホ用カード要素 ---
+            const card = document.createElement('div');
+            card.className = `p-3.5 transition-colors ${isToday ? 'bg-indigo-50/50' : 'hover:bg-slate-50/80'}`;
+
+            if (isAdmin) {
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-6 h-6 leading-6 text-center text-xs font-bold rounded-md ${dayColorClass}">${dayOfWeek}</span>
+                            <span class="font-bold text-sm ${dateColorClass}">${currentMonth + 1}月${day}日</span>
+                            ${holidayName ? `<span class="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-md leading-none border border-rose-200/60">${escapeHTML(holidayName)}</span>` : ''}
+                        </div>
+                        <button onclick="clearSchedule('${dateStr}')" title="クリア" class="p-1 text-slate-400 hover:text-rose-600 rounded">
+                            <i class="fa-regular fa-trash-can text-sm"></i>
+                        </button>
+                    </div>
+                    <div class="space-y-2">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-400 mb-0.5">予定</label>
+                            <textarea rows="1" class="schedule-textarea w-full px-3 py-1.5 rounded-lg text-slate-800 border text-xs sm:text-sm transition-all"
+                                      placeholder="予定内容、時間、場所などを入力"
+                                      oninput="autoResize(this); onScheduleInput('${dateStr}', 'col1', this.value);">${escapeHTML(scheduleObj.col1)}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-400 mb-0.5">その他・備考</label>
+                            <textarea rows="1" class="schedule-textarea w-full px-3 py-1.5 rounded-lg text-slate-800 border text-xs sm:text-sm transition-all"
+                                      placeholder="備考、他団体の予定などを入力"
+                                      oninput="autoResize(this); onScheduleInput('${dateStr}', 'col2', this.value);">${escapeHTML(scheduleObj.col2)}</textarea>
+                        </div>
+                    </div>
+                `;
+            } else {
+                const hasCol1 = scheduleObj.col1 && scheduleObj.col1.trim() !== "";
+                const hasCol2 = scheduleObj.col2 && scheduleObj.col2.trim() !== "";
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <span class="inline-block w-6 h-6 leading-6 text-center text-xs font-bold rounded-md ${dayColorClass}">${dayOfWeek}</span>
+                        <span class="font-bold text-sm ${dateColorClass}">${currentMonth + 1}月${day}日</span>
+                        ${holidayName ? `<span class="text-[10px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-md leading-none border border-rose-200/60">${escapeHTML(holidayName)}</span>` : ''}
+                    </div>
+                    ${(hasCol1 || hasCol2) ? `
+                        <div class="pl-8 space-y-1 text-xs sm:text-sm">
+                            ${hasCol1 ? `<div class="leading-relaxed text-slate-800 whitespace-pre-wrap break-all">${linkifyAndEscape(scheduleObj.col1)}</div>` : ''}
+                            ${hasCol2 ? `<div class="leading-relaxed text-slate-500 whitespace-pre-wrap break-all text-[11px] sm:text-xs pt-0.5">${linkifyAndEscape(scheduleObj.col2)}</div>` : ''}
+                        </div>
+                    ` : `
+                        <div class="pl-8 text-xs text-slate-300 italic">予定なし</div>
+                    `}
+                `;
+            }
+            mobileList.appendChild(card);
         }
+
         if (isAdmin) {
             document.querySelectorAll('textarea.schedule-textarea').forEach(ta => autoResize(ta));
         }
