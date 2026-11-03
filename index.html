@@ -238,7 +238,7 @@
     // ----------------------------------------------------
     // ★ パスワードのハッシュ化・認証設定
     // ----------------------------------------------------
-  const ADMIN_PASSWORD_HASH = "a74f49e16fad3f4383ea5fc76ea7c8123550b6fc7a41d12e5a5f2579addca549";
+    const ADMIN_PASSWORD_HASH = "a74f49e16fad3f4383ea5fc76ea7c8123550b6fc7a41d12e5a5f2579addca549";
 
     async function hashPassword(str) {
         const encoder = new TextEncoder();
@@ -254,6 +254,7 @@
     let currentMonth = currentDate.getMonth(); 
 
     let monthlySchedules = {}; // メモリ上の月別キャッシュ
+    let isInitialRender = true; // 初回描画判定フラグ
 
     // テキストエリア自動伸縮
     window.autoResize = function(textarea) {
@@ -498,6 +499,7 @@
 
             // --- 2. スマホ用カード要素 ---
             const card = document.createElement('div');
+            card.id = `mobile-card-${dateStr}`; // スマホ用の個別ID付与
             card.className = `p-3.5 transition-colors ${isToday ? 'bg-indigo-50/50' : 'hover:bg-slate-50/80'}`;
 
             if (isAdmin) {
@@ -552,6 +554,22 @@
         if (isAdmin) {
             document.querySelectorAll('textarea.schedule-textarea').forEach(ta => autoResize(ta));
         }
+
+        // --- 初回ロード時＆今月表示のときに当日の位置へスクロール ---
+        if (isInitialRender) {
+            isInitialRender = false;
+            scrollToToday(todayStr);
+        }
+    }
+
+    // 当日の位置へスムーズにスクロールする関数
+    function scrollToToday(todayStr) {
+        setTimeout(() => {
+            const todayCard = document.getElementById(`mobile-card-${todayStr}`);
+            if (todayCard && window.innerWidth < 640) { // スマホサイズ（sm未満）のときのみ
+                todayCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 100);
     }
 
     window.onScheduleInput = function(dateStr, colKey, value) {
@@ -582,6 +600,8 @@
         currentYear = now.getFullYear();
         currentMonth = now.getMonth();
         renderCalendar();
+        // 「今月」ボタンを押したときも当日にスクロール
+        scrollToToday(getFormattedDate(now));
     };
 
     function getFormattedDate(date) {
